@@ -1,0 +1,26 @@
+{
+  "contract": "chinese-project-kit-layout-v1",
+  "schema_version": 1,
+  "directories": [
+    {"key": "overview", "path": "00_项目说明", "purpose": "中文项目总览、使用方法和入口"},
+    {"key": "requirements", "path": "01_需求与设计", "purpose": "目标、约束、需求、方案和工作计划"},
+    {"key": "inputs", "path": "02_资料与输入", "purpose": "原始资料、来源信息和输入数据"},
+    {"key": "workspace", "path": "03_工作区", "purpose": "唯一可编辑的代码、草稿和分析文件"},
+    {"key": "delivery", "path": "04_成果与交付", "purpose": "可使用的成果、交付索引或版本化交付包"},
+    {"key": "verification", "path": "05_验证与验收", "purpose": "检查结果、测试报告和验收证据"},
+    {"key": "records", "path": "06_过程记录", "purpose": "必要的关键决定、进度和后续事项"},
+    {"key": "archive", "path": "99_历史归档", "purpose": "已停用资料和历史交付"}
+  ],
+  "scenarios": {
+    "code": {"label": "代码开发", "work_subdir": "源码"},
+    "office": {"label": "办公文档", "work_subdir": "文档草稿"},
+    "data": {"label": "数据分析", "work_subdir": "数据处理"},
+    "research": {"label": "研究整理", "work_subdir": "研究笔记"},
+    "content": {"label": "内容创作", "work_subdir": "内容草稿"},
+    "design": {"label": "产品与设计", "work_subdir": "设计工作"},
+    "business": {"label": "商业运营", "work_subdir": "运营工作"},
+    "learning": {"label": "学习训练", "work_subdir": "学习练习"},
+    "planning": {"label": "计划执行", "work_subdir": "执行工作"},
+    "daily": {"label": "日常事务", "work_subdir": "事务处理"}
+  }
+}

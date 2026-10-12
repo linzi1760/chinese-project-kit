@@ -1,0 +1,4 @@
+interface:
+  display_name: "中文项目包"
+  short_description: "统一中文项目目录、说明与交付，按场景生成并检查可复用项目包"
+  default_prompt: "请使用 $chinese-project-kit 为我的任务生成统一中文项目包，并检查目录、成果与验收记录。"
