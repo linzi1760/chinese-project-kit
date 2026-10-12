@@ -20,7 +20,7 @@
 
 ## 快速开始
 
-运行要求：Python 3.10+；克隆和更新仓库需要 Git。当前已在 Windows 验证，Linux 与 macOS 尚未实测。
+运行要求：Python 3.10+；克隆和更新仓库需要 Git。项目包测试已通过 Windows / Python 3.12 与 Ubuntu / Python 3.10 的 GitHub Actions 验证，macOS 尚未实测。
 
 ```sh
 git clone https://github.com/linzi1760/chinese-project-kit.git
@@ -178,7 +178,7 @@ python scripts/project_kit.py check --root "ABSOLUTE_PROJECT_PATH" --delivery
 
 ## 已验证范围
 
-当前在 Windows 通过 12 项标准库单元测试，覆盖十种场景初始化及结构检查、中文和空格路径、非空目录与重复初始化保护、只读检查、路径及链接越界、依赖环、伪完成、缺失交付文件和 UTF-8 输出。另完成一个 `learning` 项目包试用。
+当前 12 项标准库单元测试在本地 Windows 通过，并通过 [Windows / Python 3.12 与 Ubuntu / Python 3.10 的 CI](https://github.com/linzi1760/chinese-project-kit/actions/runs/38251794299)。测试覆盖十种场景初始化及结构检查、中文和空格路径、非空目录与重复初始化保护、只读检查、路径及链接越界、依赖环、伪完成、缺失交付文件和 UTF-8 输出。另完成一个 `learning` 项目包试用。
 
 在仓库根目录复核测试：
 
@@ -186,7 +186,7 @@ python scripts/project_kit.py check --root "ABSOLUTE_PROJECT_PATH" --delivery
 python -m unittest discover -s scripts -p "test_project_kit.py" -v
 ```
 
-这些证据支持项目包生成和记录检查能力。脚本不判断代码功能、事实正确性、文档排版、设计效果或学习成果；这些需由实际测试、阅读、渲染或相应专业验收确认。Linux、macOS 及其他专业场景的完整工作链仍待验证。
+这些证据支持项目包生成和记录检查能力。脚本不判断代码功能、事实正确性、文档排版、设计效果或学习成果；这些需由实际测试、阅读、渲染或相应专业验收确认。macOS 及各专业场景的完整工作链仍待验证。
 
 ## Flowkit 状态
 
