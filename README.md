@@ -209,3 +209,24 @@ python -m unittest discover -s scripts -p "test_project_kit.py" -v
 - [Cookiecutter 官方 README](https://github.com/cookiecutter/cookiecutter)：借鉴用具体生成例子展示输入与输出，并为使用者和贡献者分别提供入口。
 
 本项目独立维护，没有使用 Copier 或 Cookiecutter 作为运行依赖，也与它们没有官方合作关系。这里借鉴的是介绍结构，不宣称具备它们的模板渲染、钩子或项目迁移能力。
+
+## AI 多轮项目接续（v0.2 候选功能）
+
+在支持加载 `SKILL.md` 的 AI 助手里，这个工具可作为项目工作的*按需*辅助：用户只说“继续项目”，助手可以判断是否需要读取既有计划，但是否会自动触发取决于助手环境，**当前尚无 ChatGPT 网页版插件自动调用的真实验收**。
+
+新增标准库命令行入口 `scripts/project_kit_agent.py`：
+
+```sh
+python scripts/project_kit_agent.py inspect --root "ABSOLUTE_PROJECT_PATH"
+python scripts/project_kit_agent.py adopt --root "ABSOLUTE_PROJECT_PATH"
+python scripts/project_kit_agent.py status --root "ABSOLUTE_PROJECT_PATH"
+# 根据 status 的 revision 新增或更新任务
+python scripts/project_kit_agent.py task-add --root "ABSOLUTE_PROJECT_PATH" --expected-revision 0 --id T-01 --title "开展一个具体任务"
+```
+
+- 新项目继续使用原 `工作计划.json`，不会复制第二套计划；旧仓库使用仓库**外部**索引，避免搬文件或改代码。
+- 写入要求预期修订号，防止多个 AI 或进程用旧计划覆盖较新的任务进度。
+- 当前拒绝直接声明 `done`；仅支持推进到 `verifying`，真正完成还需要专业验收与记录。
+- 默认项目索引位于当前用户主目录下的 `.chinese-project-kit/projects/`，包含项目绝对路径和任务元信息，仅在明确调用 `adopt` 时创建。
+
+完整规则和限制见 [AI 自动接续与验收](references/自动接续与验收.md)。
