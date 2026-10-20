@@ -28,9 +28,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Check Python syntax
-        run: python -m py_compile scripts/project_kit.py scripts/test_project_kit.py
+        run: python -m py_compile scripts/project_kit.py scripts/test_project_kit.py scripts/project_kit_agent.py scripts/test_project_kit_agent.py
       - name: Run project package tests
         working-directory: scripts
         env:
           PYTHONUTF8: '1'
-        run: python -m unittest -v test_project_kit.py
+        run: python -m unittest -v test_project_kit.py test_project_kit_agent.py
