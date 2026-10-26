@@ -178,6 +178,90 @@ class AgentTests(unittest.TestCase):
         self.set_state(self.legacy, 1, "T", "verifying", ok=False)
         self.assertEqual(self.status()["revision"], 1)
 
+    def test_validate_plan_rejects_invalid_node_status(self):
+        for fields in ({}, {"status": "banana"}, {"status": []}, {"status": None},
+                       {"status": {}}, {"status": 0}, {"status": False}):
+            with self.subTest(fields=fields):
+                plan = {"revision": 0, "nodes": [{"id": "BAD", **fields}]}
+                with self.assertRaisesRegex(ValueError, "任务状态非法"):
+                    agent_module.validate_plan(plan)
+
+    def test_invalid_sidecar_status_rejected_without_writes(self):
+        self.adopt()
+        plan_path = self.state / "plan.json"
+        template = json.loads(plan_path.read_text(encoding="utf-8"))
+        commands = (
+            ("status",),
+            ("task-add", "--expected-revision", "0", "--id", "NEW", "--title", "新增"),
+            ("task-set", "--expected-revision", "0", "--id", "VALID", "--status", "doing"),
+        )
+        for fields in ({}, {"status": "banana"}, {"status": []}, {"status": None},
+                       {"status": {}}, {"status": 0}, {"status": False}):
+            for command in commands:
+                with self.subTest(fields=fields, command=command[0]):
+                    plan = {**template, "nodes": [{"id": "BAD", **fields},
+                                                 {"id": "VALID", "status": "planned"}]}
+                    plan_path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
+                    before_plan = plan_path.read_bytes()
+                    before_manifest = (self.state / "manifest.json").read_bytes()
+                    before_source = self.snapshot(self.legacy)
+                    before_state = self.snapshot(self.state)
+                    proc = subprocess.run(
+                        [sys.executable, str(AGENT), *command, "--root", str(self.legacy),
+                         "--state", str(self.state)], capture_output=True,
+                        text=True, encoding="utf-8", timeout=20)
+                    self.assertEqual(proc.returncode, 1, proc.stdout)
+                    self.assertEqual(proc.stderr, "")
+                    data = json.loads(proc.stdout)
+                    self.assertFalse(data["ok"])
+                    self.assertIn("任务状态非法", data["reason"])
+                    self.assertEqual(plan_path.read_bytes(), before_plan)
+                    self.assertEqual((self.state / "manifest.json").read_bytes(), before_manifest)
+                    self.assertEqual(self.snapshot(self.state), before_state)
+                    self.assertEqual(self.snapshot(self.legacy), before_source)
+
+    def test_sidecar_accepts_all_states_and_preserves_extensions(self):
+        self.adopt()
+        plan_path = self.state / "plan.json"
+        template = json.loads(plan_path.read_text(encoding="utf-8"))
+        # Sidecars may have minimal nodes, including manually recorded done without evidence.
+        nodes = [{"id": state, "status": state, "custom": {"keep": [state]}}
+                 for state in sorted(agent_module.STATES)]
+        for revision_fields in ({}, {"revision": 0}):
+            with self.subTest(revision_fields=revision_fields):
+                plan = {"contract": template["contract"], "status": "planned", "nodes": nodes,
+                        "custom_plan": {"keep": True}, **revision_fields}
+                plan_path.write_text(json.dumps(plan), encoding="utf-8")
+                before_state = self.snapshot(self.state)
+                before_source = self.snapshot(self.legacy)
+                status = self.status()
+                self.assertEqual(status["revision"], 0)
+                self.assertEqual(status["nodes"], nodes)
+                self.assertEqual(set(status["unfinished"]),
+                                 agent_module.STATES - {"done", "cancelled"})
+                self.assertEqual(self.snapshot(self.state), before_state)
+                self.add(self.legacy, 0, "NEW", "新增")
+                self.set_state(self.legacy, 1, "NEW", "doing")
+                updated = json.loads(plan_path.read_text(encoding="utf-8"))
+                self.assertEqual(updated["revision"], 2)
+                self.assertEqual(updated["nodes"][:-1], nodes)
+                self.assertEqual(updated["custom_plan"], plan["custom_plan"])
+                self.assertEqual(self.snapshot(self.legacy), before_source)
+
+    def test_empty_sidecar_nodes_keep_revision_zero_compatibility(self):
+        self.adopt()
+        plan_path = self.state / "plan.json"
+        template = json.loads(plan_path.read_text(encoding="utf-8"))
+        for revision_fields in ({}, {"revision": 0}):
+            with self.subTest(revision_fields=revision_fields):
+                plan = {"contract": template["contract"], "nodes": [], **revision_fields}
+                plan_path.write_text(json.dumps(plan), encoding="utf-8")
+                status = self.status()
+                self.assertEqual(status["revision"], 0)
+                self.assertEqual(status["nodes"], [])
+                self.add(self.legacy, 0, "NEW", "新增")
+                self.assertEqual(self.status()["revision"], 1)
+
     def test_duplicate_task_refused(self):
         self.adopt()
         self.add(self.legacy, 0, "T", "任务")
