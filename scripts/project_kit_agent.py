@@ -177,6 +177,8 @@ def validate_plan(plan):
     for node in nodes:
         if not isinstance(node, dict) or not isinstance(node.get("id"), str) or not node["id"].strip():
             raise ValueError("任务标识非法。")
+        if not isinstance(node.get("status"), str) or node["status"] not in STATES:
+            raise ValueError("任务状态非法。")
         ids.append(node["id"])
     if len(ids) != len(set(ids)):
         raise ValueError("任务标识重复。")
