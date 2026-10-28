@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "chinese-project-kit",
+  "version": "0.2.0-alpha.2",
+  "description": "为已授权的持续项目组织中文交付，安全读取和接续工作计划。仅含 Skills 与本地 Python 工具，不包含远程服务。",
+  "author": {"name": "linzi1760", "url": "https://github.com/linzi1760"},
+  "repository": "https://github.com/linzi1760/chinese-project-kit",
+  "license": "MIT",
+  "keywords": ["project", "workflow", "chinese"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "中文项目包",
+        "shortDescription": "安全接续项目进度与中文交付",
+        "longDescription": "在助手确实能访问已授权工作区时，组织中文项目交付，识别旧仓库并在仓库外保存进度索引。保留原文件、人工完成状态和并发锁。仅含 Skills 及 Python 标准库工具，没有远程 MCP、跨设备同步或后台服务。自动触发依赖安装与运行环境，三轮真实验收尚未完成。",
+        "developerName": "linzi1760",
+        "category": "Developer Tools",
+        "capabilities": ["Read", "Write"],
+        "defaultPrompt": ["继续这个项目，先检查已有进度，再修复未完成的问题。"]
+      }
+    }
+  }
+}

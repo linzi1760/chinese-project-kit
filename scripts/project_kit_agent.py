@@ -141,6 +141,7 @@ def read_state(root, state):
             or manifest.get("mode") != "external-sidecar"
             or plan.get("contract") != WORKFLOW):
         raise ValueError("索引格式或项目路径不匹配；拒绝读取/覆盖。")
+    validate_plan(plan)
     return manifest, plan
 
 

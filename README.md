@@ -212,7 +212,19 @@ python -m unittest discover -s scripts -p "test_project_kit.py" -v
 
 ## AI 多轮项目接续（v0.2 候选功能）
 
-在支持加载 `SKILL.md` 的 AI 助手里，这个工具可作为项目工作的*按需*辅助：用户只说“继续项目”，助手可以判断是否需要读取既有计划，但是否会自动触发取决于助手环境，**当前尚无 ChatGPT 网页版插件自动调用的真实验收**。
+在支持加载 `SKILL.md` 的 AI 助手里，这个工具可作为项目工作的*按需*辅助：用户只说“继续项目”，助手可以判断是否需要读取既有计划，但是否会自动触发取决于助手环境，**当前尚无三轮真实模型自动调用验收**。
+
+### 本地插件打包（0.2.0-alpha.2 候选）
+
+`packaging/plugin.json` 使用 portable Agent Plugins 格式。仅封装既有 Skill 与本地 Python 工具，不增加远程服务、hooks 或凭证。
+
+```sh
+python tools/build_plugin.py --output /绝对路径/chinese-project-kit-0.2.0-alpha.2.zip
+python -m unittest discover -s scripts -p 'test_*.py' -v
+```
+
+输出已存在时构建器拒绝覆盖。包内 `plugin.json` 位于 ZIP 根目录，Skill 位于 `skills/chinese-project-kit/`。
+本地市场安装说明及使用边界见 `packaging/README.md`；本地安装成功不等于发布或自动触发成功。
 
 新增标准库命令行入口 `scripts/project_kit_agent.py`：
 
